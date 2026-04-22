@@ -1,0 +1,81 @@
+import json
+
+
+class GameState:
+    """
+    Purpose:
+        store the game state
+
+    Arguments:
+        scene_id: the current scene
+        risk: current risk amount
+        progress: current progress amount
+        resources: current resources amount
+
+    Returns:
+        none
+
+    Author:
+        Sensenbaugh
+    """
+    def __init__(self, scene_id, risk=0, progress=0, resources=5):
+        """
+        Purpose:
+            set up the game state 
+
+        Arguments:
+            scene_id: the current scene
+            risk: current risk amount
+            progress: current progress amount
+            resources: current resources amount
+
+        Returns:
+            none
+
+        Author:
+            Sensenbaugh
+        """
+        self.scene_id = scene_id
+        self.risk = risk
+        self.progress = progress
+        self.resources = resources
+        self.flags = {}
+        self.history = []
+
+    def show_stats(self):
+        """
+        Purpose:
+            show the player stats
+
+        Arguments:
+            none
+
+        Returns:
+            none
+
+        Author:
+            Sensenbaugh
+        """
+        print()
+        print("Risk:", self.risk)
+        print("Progress:", self.progress)
+        print("Resources:", self.resources)
+        print()
+
+
+def load_scenes(filename):
+    """
+    Purpose:
+        load the scenes from the json file
+
+    Arguments:
+        filename: the file name to open
+
+    Returns:
+        list: the scenes from the file
+
+    Author:
+        Sensenbaugh
+    """
+    with open(filename, "r", encoding="utf-8") as f:
+        return json.load(f)["scenes"]
