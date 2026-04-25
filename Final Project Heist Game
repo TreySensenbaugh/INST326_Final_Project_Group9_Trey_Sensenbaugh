@@ -54,7 +54,7 @@ class GameState:
             none
 
         Author:
-            Sensenbaugh
+            Antil
         """
         print()
         print("Risk:", self.risk)
@@ -75,7 +75,28 @@ def load_scenes(filename):
         list: the scenes from the file
 
     Author:
-        Sensenbaugh
+        Balfour
     """
     with open(filename, "r", encoding="utf-8") as f:
         return json.load(f)["scenes"]
+    
+    
+def get_scene_by_id(scenes, scene_id):
+    """
+    Purpose:
+        find the scene that matches the id
+
+    Arguments:
+        scenes: all the scenes
+        scene_id: the id to look for
+
+    Returns:
+        dict or None: the scene if found, or none if not
+
+    Author:
+        Coogan
+    """
+    for scene in scenes:
+        if scene["id"] == scene_id:
+            return scene
+    return None
