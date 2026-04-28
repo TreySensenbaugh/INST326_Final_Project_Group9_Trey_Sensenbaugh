@@ -101,3 +101,173 @@ def get_scene_by_id(scenes, scene_id):
             return scene
     return None
 
+#Needs done below
+
+def requirements_met(choice, state):
+    """
+    Purpose:
+        check if the player can use a choice
+
+    Arguments:
+        choice: the choice being checked
+        state: current game state
+
+    Returns:
+        bool: true if the choice can be used, false if not
+
+    Author:
+        
+    """
+    
+    
+def get_choices(scene, state):
+    """
+    Purpose:
+        get the choices the player can actually pick
+
+    Arguments:
+        scene: current scene
+        state: current game state
+
+    Returns:
+        list: choices the player is allowed to use
+
+    Author:
+        
+    """
+    
+    
+def show_scene(scene, state):
+    """
+    Purpose:
+        show the current scene text and stats
+
+    Arguments:
+        scene: current scene
+        state: current game state
+
+    Returns:
+        none
+
+    Author:
+        
+    """
+    
+    
+def show_choices(choices):
+    """
+    Purpose:
+        print all the choices for the user
+
+    Arguments:
+        choices: list of current choices
+
+    Returns:
+        none
+
+    Author:
+        
+    """
+    
+    
+def get_user_choice(choices):
+    """
+    Purpose:
+        get the user's choice input
+
+    Arguments:
+        choices: list of current choices
+
+    Returns:
+        dict: the choice the user picked
+
+    Author:
+        
+    """
+    
+    
+def apply_choice(choice, state):
+    """
+    Purpose:
+        apply the picked choice to the game state
+
+    Arguments:
+        choice: selected choice
+        state: current game state
+
+    Returns:
+        none
+
+    Author:
+        
+    """
+    
+    
+def check_game_end(state):
+    """
+    Purpose:
+        check if the game is won or lost
+
+    Arguments:
+        state: current game state
+
+    Returns:
+        str or None: win, lose, or none
+
+    Author:
+        
+    """
+    
+    
+def show_ending(result, state):
+    """
+    Purpose:
+        show the ending and final stats
+
+    Arguments:
+        result: win or lose
+        state: current game state
+
+    Returns:
+        none
+
+    Author:
+        
+    """
+    
+    
+def choose_best_escape_route(state, routes):
+    """
+    Purpose:
+        skeleton for choosing the best escape route
+
+    Arguments:
+        state: current game state
+        routes: list of possible routes
+
+    Returns:
+        dict or None: the best route or none
+
+    Author:
+        
+    """
+    
+    
+def run_game():
+    """
+    Purpose:
+        run the main game loop
+
+    Arguments:
+        none
+
+    Returns:
+        none
+
+    Author:
+        
+    """
+    
+    
+if __name__ == "__main__":
+    run_game()
