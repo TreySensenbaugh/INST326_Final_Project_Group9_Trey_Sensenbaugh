@@ -1,0 +1,820 @@
+{
+  "scenarios": {
+    "museum": {
+      "title": "Museum Heist",
+      "start_resources": 6,
+      "risk_max": 6,
+      "progress_goal": 10,
+      "scenes": [
+        {
+          "id": "START",
+          "text": "The crew is planning a museum score. First you need to decide what kind of job this will be.",
+          "choices": [
+            {
+              "label": "Plan a stealth approach",
+              "next": "TOOLS",
+              "delta": {
+                "progress": 1
+              },
+              "flags_set": {
+                "route_stealth": true
+              }
+            },
+            {
+              "label": "Plan a con approach with fake identities",
+              "next": "TOOLS",
+              "delta": {
+                "progress": 1,
+                "resources": -1
+              },
+              "flags_set": {
+                "route_con": true
+              }
+            },
+            {
+              "label": "Plan a loud smash-and-grab",
+              "next": "TOOLS",
+              "delta": {
+                "risk": 1,
+                "progress": 1
+              },
+              "flags_set": {
+                "route_loud": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "TOOLS",
+          "text": "Now pick one main tool for the museum job.",
+          "choices": [
+            {
+              "label": "Bring a hacking kit",
+              "next": "CREW",
+              "delta": {
+                "resources": -1
+              },
+              "flags_set": {
+                "has_hacking_kit": true
+              }
+            },
+            {
+              "label": "Bring lockpicks",
+              "next": "CREW",
+              "delta": {
+                "resources": -1
+              },
+              "flags_set": {
+                "has_lockpick": true
+              }
+            },
+            {
+              "label": "Bring explosives",
+              "next": "CREW",
+              "delta": {
+                "resources": -2,
+                "risk": 1
+              },
+              "flags_set": {
+                "has_explosives": true
+              }
+            },
+            {
+              "label": "Bring disguises",
+              "next": "CREW",
+              "delta": {
+                "resources": -1
+              },
+              "flags_set": {
+                "has_disguise": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "CREW",
+          "text": "Choose one specialist to help on the museum job.",
+          "choices": [
+            {
+              "label": "Bring the hacker",
+              "next": "ENTRY",
+              "delta": {
+                "progress": 1
+              },
+              "flags_set": {
+                "crew_hacker": true
+              }
+            },
+            {
+              "label": "Bring the wheelman",
+              "next": "ENTRY",
+              "delta": {
+                "progress": 1
+              },
+              "flags_set": {
+                "crew_driver": true
+              }
+            },
+            {
+              "label": "Bring the con artist",
+              "next": "ENTRY",
+              "delta": {
+                "progress": 1
+              },
+              "flags_set": {
+                "crew_con": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "ENTRY",
+          "text": "The crew arrives outside the museum. Security is tighter than expected.",
+          "choices": [
+            {
+              "label": "Climb to the roof and use the vent",
+              "next": "SECURITY_LAYER",
+              "delta": {
+                "risk": 1,
+                "progress": 1
+              },
+              "requires": {
+                "route_stealth": true
+              }
+            },
+            {
+              "label": "Walk in disguised as staff",
+              "next": "SECURITY_LAYER",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "has_disguise": true
+              }
+            },
+            {
+              "label": "Rush the back loading door",
+              "next": "SECURITY_LAYER",
+              "delta": {
+                "risk": 2,
+                "progress": 2
+              },
+              "requires": {
+                "route_loud": true
+              }
+            },
+            {
+              "label": "Use a fake maintenance story at the side entrance",
+              "next": "SECURITY_LAYER",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              },
+              "requires": {
+                "route_con": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "SECURITY_LAYER",
+          "text": "You get into the building, but there is a second layer of cameras and motion sensors.",
+          "choices": [
+            {
+              "label": "Have the hacker loop the cameras",
+              "next": "INNER_HALL",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "crew_hacker": true
+              }
+            },
+            {
+              "label": "Use the hacking kit on the security panel",
+              "next": "INNER_HALL",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              },
+              "requires": {
+                "has_hacking_kit": true
+              }
+            },
+            {
+              "label": "Move carefully and time the patrols",
+              "next": "INNER_HALL",
+              "delta": {
+                "progress": 1,
+                "risk": 1
+              }
+            },
+            {
+              "label": "Blow through the sensor lock",
+              "next": "INNER_HALL",
+              "delta": {
+                "progress": 2,
+                "risk": 3,
+                "resources": -1
+              },
+              "requires": {
+                "has_explosives": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "INNER_HALL",
+          "text": "You reach the inner exhibit corridor. A guard is posted near the vault access panel.",
+          "choices": [
+            {
+              "label": "Pick the side service door",
+              "next": "VAULT_ACCESS",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "has_lockpick": true
+              }
+            },
+            {
+              "label": "Have the con artist distract the guard",
+              "next": "VAULT_ACCESS",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              },
+              "requires": {
+                "crew_con": true
+              }
+            },
+            {
+              "label": "Sneak past while the guard is walking",
+              "next": "VAULT_ACCESS",
+              "delta": {
+                "progress": 1,
+                "risk": 1
+              }
+            },
+            {
+              "label": "Take down the guard fast",
+              "next": "VAULT_ACCESS",
+              "delta": {
+                "progress": 2,
+                "risk": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "VAULT_ACCESS",
+          "text": "You are at the museum vault. This is the point where bad planning starts to hurt.",
+          "choices": [
+            {
+              "label": "Hack the vault control system",
+              "next": "GRAB_TARGET",
+              "delta": {
+                "progress": 2,
+                "risk": 1,
+                "resources": -1
+              },
+              "requires": {
+                "has_hacking_kit": true
+              }
+            },
+            {
+              "label": "Open the backup mechanical lock",
+              "next": "GRAB_TARGET",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "has_lockpick": true
+              }
+            },
+            {
+              "label": "Blow the vault door",
+              "next": "GRAB_TARGET",
+              "delta": {
+                "progress": 3,
+                "risk": 3,
+                "resources": -1
+              },
+              "requires": {
+                "has_explosives": true
+              }
+            },
+            {
+              "label": "Try forcing the panel without the right tools",
+              "next": "GRAB_TARGET",
+              "delta": {
+                "progress": 1,
+                "risk": 2,
+                "resources": -1
+              }
+            }
+          ]
+        },
+        {
+          "id": "GRAB_TARGET",
+          "text": "The target is inside the vault, but now the police response is getting close.",
+          "choices": [
+            {
+              "label": "Grab only the main item and leave now",
+              "next": "ESCAPE",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              }
+            },
+            {
+              "label": "Take extra valuables before leaving",
+              "next": "ESCAPE",
+              "delta": {
+                "progress": 3,
+                "risk": 2,
+                "resources": -1
+              }
+            },
+            {
+              "label": "Have the hacker delay the alarm one more time",
+              "next": "ESCAPE",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "crew_hacker": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "ESCAPE",
+          "text": "The crew is leaving the museum area. The escape route depends on what you planned earlier.",
+          "choices": [
+            {
+              "label": "Take the alley extraction car",
+              "next": "DONE",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "crew_driver": true
+              }
+            },
+            {
+              "label": "Blend into the panicked crowd outside",
+              "next": "DONE",
+              "delta": {
+                "progress": 1,
+                "risk": 1
+              },
+              "requires": {
+                "route_con": true
+              }
+            },
+            {
+              "label": "Climb back to the roof and vanish",
+              "next": "DONE",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              },
+              "requires": {
+                "route_stealth": true
+              }
+            },
+            {
+              "label": "Fight your way out the service road",
+              "next": "DONE",
+              "delta": {
+                "progress": 2,
+                "risk": 2
+              },
+              "requires": {
+                "route_loud": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "DONE",
+          "text": "The museum job is over.",
+          "choices": [
+            {
+              "label": "Finish",
+              "next": "DONE",
+              "delta": {}
+            }
+          ]
+        }
+      ]
+    },
+    "casino": {
+      "title": "Casino Heist",
+      "start_resources": 6,
+      "risk_max": 6,
+      "progress_goal": 11,
+      "scenes": [
+        {
+          "id": "START",
+          "text": "The casino job needs more setup. You need to decide how the crew wants to hit it.",
+          "choices": [
+            {
+              "label": "Use a silent infiltration plan",
+              "next": "TOOLS",
+              "delta": {
+                "progress": 1
+              },
+              "flags_set": {
+                "route_stealth": true
+              }
+            },
+            {
+              "label": "Use a social route with fake access",
+              "next": "TOOLS",
+              "delta": {
+                "progress": 1,
+                "resources": -1
+              },
+              "flags_set": {
+                "route_con": true
+              }
+            },
+            {
+              "label": "Go aggressive and hit fast",
+              "next": "TOOLS",
+              "delta": {
+                "risk": 1,
+                "progress": 1
+              },
+              "flags_set": {
+                "route_loud": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "TOOLS",
+          "text": "Pick one main tool package for the casino job.",
+          "choices": [
+            {
+              "label": "Take a hacking tablet",
+              "next": "CREW",
+              "delta": {
+                "resources": -1
+              },
+              "flags_set": {
+                "has_hacking_kit": true
+              }
+            },
+            {
+              "label": "Take forged staff IDs",
+              "next": "CREW",
+              "delta": {
+                "resources": -1
+              },
+              "flags_set": {
+                "has_disguise": true
+              }
+            },
+            {
+              "label": "Take explosives",
+              "next": "CREW",
+              "delta": {
+                "resources": -2,
+                "risk": 1
+              },
+              "flags_set": {
+                "has_explosives": true
+              }
+            },
+            {
+              "label": "Take an electronic key tool",
+              "next": "CREW",
+              "delta": {
+                "resources": -1
+              },
+              "flags_set": {
+                "has_key_tool": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "CREW",
+          "text": "Choose one specialist for the casino job.",
+          "choices": [
+            {
+              "label": "Bring the hacker",
+              "next": "ENTRY",
+              "delta": {
+                "progress": 1
+              },
+              "flags_set": {
+                "crew_hacker": true
+              }
+            },
+            {
+              "label": "Bring the inside man",
+              "next": "ENTRY",
+              "delta": {
+                "progress": 1
+              },
+              "flags_set": {
+                "crew_inside": true
+              }
+            },
+            {
+              "label": "Bring the getaway driver",
+              "next": "ENTRY",
+              "delta": {
+                "progress": 1
+              },
+              "flags_set": {
+                "crew_driver": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "ENTRY",
+          "text": "The crew reaches the casino. Cameras, staff traffic, and floor security make this job harder than the museum.",
+          "choices": [
+            {
+              "label": "Enter through a staff elevator route",
+              "next": "FLOOR_MOVE",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "has_disguise": true
+              }
+            },
+            {
+              "label": "Move quietly through the parking garage",
+              "next": "FLOOR_MOVE",
+              "delta": {
+                "progress": 1,
+                "risk": 1
+              },
+              "requires": {
+                "route_stealth": true
+              }
+            },
+            {
+              "label": "Cause a distraction at the front entrance",
+              "next": "FLOOR_MOVE",
+              "delta": {
+                "progress": 2,
+                "risk": 2,
+                "resources": -1
+              },
+              "requires": {
+                "route_loud": true
+              }
+            },
+            {
+              "label": "Use a fake VIP access story",
+              "next": "FLOOR_MOVE",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              },
+              "requires": {
+                "route_con": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "FLOOR_MOVE",
+          "text": "You are inside, but the casino floor is packed and security is tracking movement everywhere.",
+          "choices": [
+            {
+              "label": "Use the inside man to reach a staff hallway",
+              "next": "SECURITY_HUB",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "crew_inside": true
+              }
+            },
+            {
+              "label": "Hack a nearby security terminal",
+              "next": "SECURITY_HUB",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              },
+              "requires": {
+                "has_hacking_kit": true
+              }
+            },
+            {
+              "label": "Walk the floor slowly and avoid cameras",
+              "next": "SECURITY_HUB",
+              "delta": {
+                "progress": 1,
+                "risk": 1
+              }
+            },
+            {
+              "label": "Push through fast before guards react",
+              "next": "SECURITY_HUB",
+              "delta": {
+                "progress": 2,
+                "risk": 2
+              }
+            }
+          ]
+        },
+        {
+          "id": "SECURITY_HUB",
+          "text": "You reach the checkpoint controlling access to the vault area. This is where weak planning starts to collapse.",
+          "choices": [
+            {
+              "label": "Have the hacker kill the camera feed",
+              "next": "VAULT_HALL",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "crew_hacker": true
+              }
+            },
+            {
+              "label": "Use the electronic key tool on the side door",
+              "next": "VAULT_HALL",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              },
+              "requires": {
+                "has_key_tool": true
+              }
+            },
+            {
+              "label": "Use forged access and bluff your way through",
+              "next": "VAULT_HALL",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              },
+              "requires": {
+                "has_disguise": true
+              }
+            },
+            {
+              "label": "Force the checkpoint before backup arrives",
+              "next": "VAULT_HALL",
+              "delta": {
+                "progress": 2,
+                "risk": 3
+              }
+            }
+          ]
+        },
+        {
+          "id": "VAULT_HALL",
+          "text": "You are close to the vault room, but the casino has a secondary alarm layer that can end the job fast.",
+          "choices": [
+            {
+              "label": "Hack the secondary alarm",
+              "next": "VAULT_ROOM",
+              "delta": {
+                "progress": 2,
+                "risk": 1,
+                "resources": -1
+              },
+              "requires": {
+                "has_hacking_kit": true
+              }
+            },
+            {
+              "label": "Use the inside man’s code",
+              "next": "VAULT_ROOM",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "crew_inside": true
+              }
+            },
+            {
+              "label": "Plant charges and force the lock",
+              "next": "VAULT_ROOM",
+              "delta": {
+                "progress": 3,
+                "risk": 3,
+                "resources": -1
+              },
+              "requires": {
+                "has_explosives": true
+              }
+            },
+            {
+              "label": "Try to bypass it manually",
+              "next": "VAULT_ROOM",
+              "delta": {
+                "progress": 1,
+                "risk": 2,
+                "resources": -1
+              }
+            }
+          ]
+        },
+        {
+          "id": "VAULT_ROOM",
+          "text": "The vault room is open, but the longer you stay the closer casino security gets to a full lockdown.",
+          "choices": [
+            {
+              "label": "Take the nearest cash and leave now",
+              "next": "ESCAPE",
+              "delta": {
+                "progress": 2,
+                "risk": 1
+              }
+            },
+            {
+              "label": "Open one more set of cash cages",
+              "next": "ESCAPE",
+              "delta": {
+                "progress": 3,
+                "risk": 2,
+                "resources": -1
+              }
+            },
+            {
+              "label": "Go for the extra take even though the floor is heating up",
+              "next": "ESCAPE",
+              "delta": {
+                "progress": 4,
+                "risk": 3,
+                "resources": -1
+              }
+            }
+          ]
+        },
+        {
+          "id": "ESCAPE",
+          "text": "The casino is now reacting hard. This is where greedy runs usually die.",
+          "choices": [
+            {
+              "label": "Use the getaway car route from the garage",
+              "next": "DONE",
+              "delta": {
+                "progress": 2
+              },
+              "requires": {
+                "crew_driver": true
+              }
+            },
+            {
+              "label": "Try to leave through the loading bay",
+              "next": "DONE",
+              "delta": {
+                "progress": 1,
+                "risk": 2
+              }
+            },
+            {
+              "label": "Blend into the crowd and walk out",
+              "next": "DONE",
+              "delta": {
+                "progress": 1,
+                "risk": 1
+              },
+              "requires": {
+                "route_con": true
+              }
+            },
+            {
+              "label": "Fight through the garage exit",
+              "next": "DONE",
+              "delta": {
+                "progress": 2,
+                "risk": 3
+              },
+              "requires": {
+                "route_loud": true
+              }
+            }
+          ]
+        },
+        {
+          "id": "DONE",
+          "text": "The casino job is over.",
+          "choices": [
+            {
+              "label": "Finish",
+              "next": "DONE",
+              "delta": {}
+            }
+          ]
+        }
+      ]
+    }
+  }
+}

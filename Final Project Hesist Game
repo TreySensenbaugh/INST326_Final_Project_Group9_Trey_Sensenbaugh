@@ -1,5 +1,5 @@
 import json
-
+import os
 
 class GameState:
     """
@@ -63,7 +63,7 @@ class GameState:
         print()
 
 
-def load_scenes(filename):
+def load_game_data(filename):
     """
     Purpose:
         load the scenes from the json file
@@ -77,8 +77,45 @@ def load_scenes(filename):
     Author:
         Balfour
     """
-    with open(filename, "r", encoding="utf-8") as f:
-        return json.load(f)["scenes"]
+    script_folder = os.path.dirname(os.path.abspath(__file__))
+    full_path = os.path.join(script_folder, filename)
+
+    print("Looking for:", full_path)
+
+    with open(full_path, "r", encoding="utf-8") as f:
+        return json.load(f)
+    
+    
+def choose_scenario(data):
+    """
+    Purpose:
+        let the player choose a scenario
+
+    Arguments:
+        data: full game data
+
+    Returns:
+        dict: the chosen scenario
+
+    Author:
+        Sensenbaugh
+    """
+    scenario_names = list(data["scenarios"].keys())
+
+    print("Choose a scenario:")
+    for i in range(len(scenario_names)):
+        scenario_key = scenario_names[i]
+        print(str(i + 1) + ".", data["scenarios"][scenario_key]["title"])
+
+    while True:
+        pick = input("Pick a scenario: ").strip()
+        if pick.isdigit():
+            pick = int(pick)
+            if 1 <= pick <= len(scenario_names):
+                chosen_key = scenario_names[pick - 1]
+                return data["scenarios"][chosen_key]
+
+        print("Invalid choice.")
     
     
 def get_scene_by_id(scenes, scene_id):
@@ -128,6 +165,9 @@ def requirements_met(choice, state):
                 return False
         elif key == "max_risk":
             if state.risk > value:
+                return False
+        elif key == "min_progress":
+            if state.progress < value:
                 return False
         else:
             if state.flags.get(key) != value:
@@ -240,7 +280,6 @@ def apply_choice(choice, state):
     """
     if "delta" in choice:
         delta = choice["delta"]
-
         state.risk += delta.get("risk", 0)
         state.progress += delta.get("progress", 0)
         state.resources += delta.get("resources", 0)
@@ -253,7 +292,7 @@ def apply_choice(choice, state):
     state.scene_id = choice["next"]
     
     
-def check_game_end(state):
+def check_game_end(state, scenario_data):
     """
     Purpose:
         check if the game is won or lost
@@ -267,13 +306,16 @@ def check_game_end(state):
     Author: Antil
         
     """
-    if state.risk > 6:
+    risk_max = scenario_data.get("risk_max", 6)
+    progress_goal = scenario_data.get("progress_goal", 9)
+    
+    if state.risk > risk_max:
         return "lose"
 
     if state.resources <= 0:
         return "lose"
 
-    if state.progress >= 7 and state.risk <= 6 and state.resources > 0:
+    if state.progress >= progress_goal and state.risk <= risk_max and state.resources > 0:
         return "win"
 
     return None
@@ -312,40 +354,7 @@ def show_ending(result, state):
 
     for item in state.history:
         print("-", item)
-    
-    
-def choose_best_escape_route(state, routes):
-    """
-    Purpose:
-        skeleton for choosing the best escape route
-
-    Arguments:
-        state: current game state
-        routes: list of possible routes
-
-    Returns:
-        dict or None: the best route or none
-
-    Author: Coogan
         
-    """
-    valid_routes = []
-
-    # go through each route
-    for route in routes:
-        # check if the player can use this route
-        pass
-
-    # if none worked return none
-    if len(valid_routes) == 0:
-        return None
-
-    # compare the routes somehow
-    best_route = None
-
-    # return the route that seems best
-    return best_route
-    
     
 def run_game():
     """
@@ -359,10 +368,11 @@ def run_game():
         none
 
     Author: Sensenbaugh
-        
     """
-    scenes = load_scenes("scenes.json")
-    state = GameState("START")
+    data = load_game_data("scenes.json")
+    scenario_data = choose_scenario(data)
+    scenes = scenario_data["scenes"]
+    state = GameState("START", resources=scenario_data.get("start_resources", 6))
 
     while True:
         scene = get_scene_by_id(scenes, state.scene_id)
@@ -372,7 +382,6 @@ def run_game():
             break
 
         show_scene(scene, state)
-
         choices = get_choices(scene, state)
 
         if len(choices) == 0:
@@ -384,7 +393,7 @@ def run_game():
         chosen = get_user_choice(choices)
         apply_choice(chosen, state)
 
-        result = check_game_end(state)
+        result = check_game_end(state, scenario_data)
 
         if result is not None:
             show_ending(result, state)
