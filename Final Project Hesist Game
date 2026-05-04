@@ -101,7 +101,6 @@ def get_scene_by_id(scenes, scene_id):
             return scene
     return None
 
-#Needs done below
 
 def requirements_met(choice, state):
     """
@@ -115,9 +114,26 @@ def requirements_met(choice, state):
     Returns:
         bool: true if the choice can be used, false if not
 
-    Author:
+    Author: Antil
         
     """
+    if "requires" not in choice:
+        return True
+
+    reqs = choice["requires"]
+
+    for key, value in reqs.items():
+        if key == "min_resources":
+            if state.resources < value:
+                return False
+        elif key == "max_risk":
+            if state.risk > value:
+                return False
+        else:
+            if state.flags.get(key) != value:
+                return False
+
+    return True
     
     
 def get_choices(scene, state):
@@ -132,9 +148,16 @@ def get_choices(scene, state):
     Returns:
         list: choices the player is allowed to use
 
-    Author:
+    Author: Balfour
         
     """
+    good_choices = []
+
+    for choice in scene["choices"]:
+        if requirements_met(choice, state):
+            good_choices.append(choice)
+
+    return good_choices
     
     
 def show_scene(scene, state):
@@ -149,9 +172,12 @@ def show_scene(scene, state):
     Returns:
         none
 
-    Author:
+    Author: Coogan
         
     """
+    print("=" * 50)
+    print(scene["text"])
+    state.show_stats()
     
     
 def show_choices(choices):
@@ -165,9 +191,11 @@ def show_choices(choices):
     Returns:
         none
 
-    Author:
+    Author: Antil
         
     """
+    for i in range(len(choices)):
+        print(str(i + 1) + ".", choices[i]["label"])
     
     
 def get_user_choice(choices):
@@ -181,9 +209,18 @@ def get_user_choice(choices):
     Returns:
         dict: the choice the user picked
 
-    Author:
+    Author: Balfour
         
     """
+    while True:
+       pick = input("Pick a choice: ").strip()
+
+       if pick.isdigit():
+            pick = int(pick)
+            if 1 <= pick <= len(choices):
+                return choices[pick - 1]
+
+       print("Invalid choice.")
     
     
 def apply_choice(choice, state):
@@ -198,9 +235,22 @@ def apply_choice(choice, state):
     Returns:
         none
 
-    Author:
+    Author: Coogan
         
     """
+    if "delta" in choice:
+        delta = choice["delta"]
+
+        state.risk += delta.get("risk", 0)
+        state.progress += delta.get("progress", 0)
+        state.resources += delta.get("resources", 0)
+
+    if "flags_set" in choice:
+        for key, value in choice["flags_set"].items():
+            state.flags[key] = value
+
+    state.history.append(choice["label"])
+    state.scene_id = choice["next"]
     
     
 def check_game_end(state):
@@ -214,9 +264,19 @@ def check_game_end(state):
     Returns:
         str or None: win, lose, or none
 
-    Author:
+    Author: Antil
         
     """
+    if state.risk > 6:
+        return "lose"
+
+    if state.resources <= 0:
+        return "lose"
+
+    if state.progress >= 7 and state.risk <= 6 and state.resources > 0:
+        return "win"
+
+    return None
     
     
 def show_ending(result, state):
@@ -231,9 +291,27 @@ def show_ending(result, state):
     Returns:
         none
 
-    Author:
+    Author: Balfour
         
     """
+    print()
+    print("=" * 50)
+
+    if result == "win":
+        print("You got away with the heist.")
+    else:
+        print("The heist failed.")
+
+    print()
+    print("Final stats")
+    print("Risk:", state.risk)
+    print("Progress:", state.progress)
+    print("Resources:", state.resources)
+    print()
+    print("History:")
+
+    for item in state.history:
+        print("-", item)
     
     
 def choose_best_escape_route(state, routes):
@@ -248,9 +326,25 @@ def choose_best_escape_route(state, routes):
     Returns:
         dict or None: the best route or none
 
-    Author:
+    Author: Coogan
         
     """
+    valid_routes = []
+
+    # go through each route
+    for route in routes:
+        # check if the player can use this route
+        pass
+
+    # if none worked return none
+    if len(valid_routes) == 0:
+        return None
+
+    # compare the routes somehow
+    best_route = None
+
+    # return the route that seems best
+    return best_route
     
     
 def run_game():
@@ -264,9 +358,37 @@ def run_game():
     Returns:
         none
 
-    Author:
+    Author: Sensenbaugh
         
     """
+    scenes = load_scenes("scenes.json")
+    state = GameState("START")
+
+    while True:
+        scene = get_scene_by_id(scenes, state.scene_id)
+
+        if scene is None:
+            print("Scene not found.")
+            break
+
+        show_scene(scene, state)
+
+        choices = get_choices(scene, state)
+
+        if len(choices) == 0:
+            print("No more choices.")
+            show_ending("lose", state)
+            break
+
+        show_choices(choices)
+        chosen = get_user_choice(choices)
+        apply_choice(chosen, state)
+
+        result = check_game_end(state)
+
+        if result is not None:
+            show_ending(result, state)
+            break
     
     
 if __name__ == "__main__":
